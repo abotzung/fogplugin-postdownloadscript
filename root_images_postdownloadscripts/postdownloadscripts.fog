@@ -1,0 +1,84 @@
+#!/bin/sh
+#
+#  PostDownloadScript FOG Stub client
+# 
+#  PHP version 5
+# 
+#  @category PostDownloadScript
+#  @package  FOGProject
+#  @author   Alexandre BOTZUNG <alexandre.botzung@grandest.fr>
+#  @license  http://opensource.org/licenses/gpl-3.0 GPLv3
+#  @link     https://github.com/abotzung/fogplugin-postdownloadscript
+#
+
+# Script chargeant les différents pseudo scripts depuis FOG (pour le type d'image déployée)
+# Alexandre BOTZUNG - Feb 2021 (alexandre.botzung@grandest.fr)
+. /usr/share/fog/lib/funcs.sh
+
+# Charge les informations depuis le serveur FOG. 
+# Si le serveur a une tâche pour le client, la variable "$type" est peuplée
+rm /tmp/hinfo.txt >/dev/null 2>&1
+sysuuid=$(dmidecode -s system-uuid)
+sysuuid=${sysuuid,,}
+mac=$(getMACAddresses)
+curl -Lks -o /tmp/hinfo.txt --data "sysuuid=${sysuuid}&mac=$mac" "${web}service/hostinfo.php" -A ''
+
+imgid="" # Vide la variable imgid (la seule utile dans notre cas)
+[[ -f /tmp/hinfo.txt ]] && . /tmp/hinfo.txt >/dev/null 2>&1
+# Possible que le poste ait été lancé sans être enregistrée du réseau, je lis son fichier de confs au cas où.
+[[ -f /tmp/krnl.txt ]] && . /tmp/krnl.txt >/dev/null 2>&1
+
+
+if [[ ! $imgid -eq 0 ]]; then
+	#OK
+	# l'URL ressemble à un truc comme ça : http://xxx.xxx.xxx.xxx/fog/service/postdownloadscript.php?action=scriptlookupbyimgid&imgid=4&pdsnumber=2
+	DoCurl=$(curl -Lks --data "action=scriptlookupbyimgid&imgid=${imgid}" "${web}service/postdownloadscript.php" -A '')
+	
+	
+	
+	### Une erreur est survenue
+	if [[ $DoCurl ==# "!noscr"* ]]; then
+			echo "Une erreur est survenue ; pas de script disponible pour cette image (imgid=${imgid} )"
+			return 0
+	fi
+
+	# Passe 1 ; récupère le nom de l'image par défaut. Renvoie 0 si échec
+	if [[ $DoCurl ==# "!ok"* ]]; then
+			IFS=$'\n'
+			for line in $DoCurl; do
+					if [[ $line !=# "!ok"* ]]; then
+							NombreScripts=$line
+					fi
+			done
+	else
+			echo "Une erreur est survenue ; impossible de determiner le nombre de scripts"
+			echo $DoCurl
+			return 0
+	fi
+
+	i=1
+	echo "Il y a ${NombreScripts} scripts pour l'image ${imagename}"
+	for (( i=1; i<=$NombreScripts; i++ ))
+	do
+		echo "Je recupere le script $i..."
+		rm /tmp/tmpscript${i}.b64 >/dev/null 2>&1
+		rm /tmp/tmpscript${i}.sh >/dev/null 2>&1
+		curl -Lks -o /tmp/tmpscript${i}.b64 --data "action=scriptlookupbyimgid&imgid=${imgid}&pdsnumber=${i}" "${web}service/postdownloadscript.php" -A ''
+		DoCurl=$(curl -Lks --data "action=scriptlookupbyimgid&imgid=${imgid}&pdsnumber=${i}" "${web}service/postdownloadscript.php" -A '')
+		if [[ $DoCurl != "#!err"* ]]; then
+			#cat /tmp/tmpscript.sh
+			base64 -d /tmp/tmpscript${i}.b64 > /tmp/tmpscript${i}.sh
+			dos2unix -u /tmp/tmpscript${i}.sh
+			chmod +x /tmp/tmpscript${i}.sh
+			. /tmp/tmpscript${i}.sh
+			echo OK
+		else
+			echo "Une erreur est survenue ; impossible d'executer le script ${i}, je passe a la suite..."
+		fi
+	done
+	
+else
+	# NOK
+	# La variable = 0? Si oui, on a peut être un problème...
+	echo "Une erreur est survenue ; Impossible d'avoir des infos concernant les variables systemes"
+fi

@@ -1,0 +1,64 @@
+#!/bin/sh
+## This file serves as a starting point to call your custom postimaging scripts.
+## <SCRIPTNAME> should be changed to the script you're planning to use.
+## Syntax of post download scripts are
+#. ${postdownpath}<SCRIPTNAME>
+# This part below finds all NTFS partitions of all hard disks && mounts it on /ntfs && executes ${postdownpath}postdownloadscripts.fog
+
+echo "starting postdownload"; 
+
+. /usr/share/fog/lib/funcs.sh
+[[ -z $postdownpath ]] && postdownpath="/images/postdownloadscripts/"
+case $osid in
+    5|6|7|9)
+        clear
+        [[ ! -d /ntfs ]] && mkdir -p /ntfs
+        getHardDisk
+        if [[ -z $hd ]]; then
+            handleError "Could not find hdd to use"
+        fi
+        getPartitions $hd
+        for part in $parts; do
+            umount /ntfs >/dev/null 2>&1
+            fsTypeSetting "$part"
+            echo  "$part"
+            case $fstype in
+                ntfs)
+                    dots "Testing partition $part"
+                    ntfs-3g -o remove_hiberfile,rw $part /ntfs
+                    ntfsstatus="$?"
+                    if [[ ! $ntfsstatus -eq 0 ]]; then
+                        echo "Skipped"
+                        continue
+                    fi
+                    if [[ ! -d /ntfs/windows && ! -d /ntfs/Windows && ! -d /ntfs/WINDOWS ]]; then
+                        echo "Not found"
+                        umount /ntfs >/dev/null 2>&1
+                        continue
+                    fi
+                    echo "Success"
+                    break
+                    ;;
+                *)
+                    echo " * Partition $part not NTFS filesystem"
+                    ;;
+            esac
+        done
+        if [[ ! $ntfsstatus -eq 0 ]]; then
+            echo "Failed"
+            debugPause
+            handleError "Failed to mount $part ($0)\n    Args: $*"
+        fi
+		# Partition NTFS trouvée, je lance le plugin post-download scripts
+		# Ligne a ajouter dans votre script -----------------
+		. ${postdownpath}postdownloadscripts.fog
+        debugPause
+		# ---------------------------------------------------
+        umount /ntfs
+        ;;
+    *)
+        echo "Non-Windows Deployment"
+        debugPause
+        return
+        ;;
+esac
