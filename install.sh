@@ -29,7 +29,7 @@ echo 'This patch comes with ABSOLUTELY NO WARRANTY'
 echo ''
 if [[ "$1" == "--unattended-yes" ]]; then
 	question='y'
-	echo ' --> UNATTENDED INSTALL., STARTING IN 5 Sec. <--'
+	echo ' --> UNATTENDED, STARTING IN 5 Sec. <--'
 	sleep 5
 else
 	read -n1 -p "Do you wish to install this addon (y/N) ? :" question
