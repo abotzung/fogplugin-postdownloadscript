@@ -51,7 +51,29 @@ if [[ "$question" == "y" || "$question" == "Y" ]]; then
 	mysql --execute="INSERT INTO plugins (pName, pState, pInstalled, pVersion, pAnon1, pAnon2, pAnon3, pAnon4, pAnon5) VALUES ('postdownloadscript', '1', '1', '1', '', '', '', '', '');" fog
 
 	# A cette étape, il manque la table du plugin, il faudra la créer...!
+	# C'est une solution "sale" ; mais le plus simple/rapide en l'état pour créer la table.
+	tempsqlfile="/tmp/addtable$RANDOM$RANDOM$RANDOM.sql"
+	cat <<'EOF' >> "$tempsqlfile"
+-- Adminer 4.7.9 MySQL dump
 
+SET NAMES utf8;
+SET time_zone = '+00:00';
+SET foreign_key_checks = 0;
+SET sql_mode = 'NO_AUTO_VALUE_ON_ZERO';
+
+CREATE TABLE `postdownloadscript` (
+  `pdsID` int(11) NOT NULL AUTO_INCREMENT,
+  `pdsName` varchar(255) NOT NULL,
+  `pdsDesc` longtext NOT NULL,
+  `pdsPriority` tinyint(4) NOT NULL,
+  `pdsScript` longtext NOT NULL,
+  `pdsImageAssociated` int(11) NOT NULL,
+  PRIMARY KEY (`pdsID`),
+  UNIQUE KEY `index0` (`pdsID`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci ROW_FORMAT=DYNAMIC;
+EOF
+	mysql fog < "$tempsqlfile"
+	rm "$tempsqlfile"
 	echo "==== Installation done ! ===="
 	echo ''
 	echo ' - Have a nice day !'	
