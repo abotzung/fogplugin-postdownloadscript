@@ -5,7 +5,7 @@
 #
 # Auteur       : Alexandre BOTZUNG [alexandre.botzung@grandest.fr]
 # Entreprise   : Région Grand-Est - Maison de région de Saverne-Haguenau
-# Version      : 20230205
+# Version      : 20230221q
 #============================================================================ 
 # install.sh
 #   Ce script déploie l'addon fogplugin-postdownloadscript
@@ -34,7 +34,8 @@ if [[ "$question" == "y" || "$question" == "Y" ]]; then
 	mkdir "/images/postdownloadscripts"
 	
 	cp -a "${basedir}/." "${docroot}${webroot}/lib/plugins/postdownloadscript"
-	chown -R fogproject:www-data "${docroot}${webroot}/lib/plugins/postdownloadscript"
+	rm -rf "${docroot}${webroot}/lib/plugins/postdownloadscript/.git"
+	chown -R www-data:www-data "${docroot}${webroot}/lib/plugins/postdownloadscript"
 	cp "/images/postdownloadscripts/fog.postdownload" "/images/postdownloadscripts/fog.postdownload_bak"
 	cp "${basedir}/src/fog.postdownload.example.txt" "/images/postdownloadscripts/fog.postdownload"
 	chmod +rx "/images/postdownloadscripts/fog.postdownload"

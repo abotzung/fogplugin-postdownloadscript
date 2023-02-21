@@ -37,22 +37,24 @@ if [[ ! $imgid -eq 0 ]]; then
 	
 	
 	### Une erreur est survenue
-	if [[ $DoCurl ==# "!noscr"* ]]; then
+	if [[ "$DoCurl" ==  *"!noscr"* ]]; then
 			echo "Une erreur est survenue ; pas de script disponible pour cette image (imgid=${imgid} )"
+			debugPause
 			return 0
 	fi
 
 	# Passe 1 ; récupère le nom de l'image par défaut. Renvoie 0 si échec
-	if [[ $DoCurl ==# "!ok"* ]]; then
+	if [[ "$DoCurl" == *"!ok"* ]]; then
 			IFS=$'\n'
 			for line in $DoCurl; do
-					if [[ $line !=# "!ok"* ]]; then
+					if [[ $line != *"!ok"* ]]; then
 							NombreScripts=$line
 					fi
 			done
 	else
 			echo "Une erreur est survenue ; impossible de determiner le nombre de scripts"
 			echo $DoCurl
+			debugPause
 			return 0
 	fi
 
@@ -74,6 +76,7 @@ if [[ ! $imgid -eq 0 ]]; then
 			echo OK
 		else
 			echo "Une erreur est survenue ; impossible d'executer le script ${i}, je passe a la suite..."
+			debugPause
 		fi
 	done
 	
@@ -81,4 +84,5 @@ else
 	# NOK
 	# La variable = 0? Si oui, on a peut être un problème...
 	echo "Une erreur est survenue ; Impossible d'avoir des infos concernant les variables systemes"
+	debugPause
 fi
