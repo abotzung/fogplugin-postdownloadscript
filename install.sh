@@ -35,7 +35,7 @@ if [[ "$question" == "y" || "$question" == "Y" ]]; then
 	cp "/images/postdownloadscripts/fog.postdownload" "/images/postdownloadscripts/fog.postdownload_bak"
 	cp "${basedir}/src/fog.postdownload.example.txt" "/images/postdownloadscripts/fog.postdownload"
 	chmod +rx "/images/postdownloadscripts/fog.postdownload"
-	cp "${basedir}/src/postdownloadscripts.fog" "/images/postdownloadscripts/postdownloadscripts.fog"
+	cp "${basedir}/src/postdownloadscripts.fog.txt" "/images/postdownloadscripts/postdownloadscripts.fog"
 	chmod +rx "/images/postdownloadscripts/postdownloadscripts.fog"
 	
 	cp "${basedir}/src/postdownloadscript.php.txt" "${docroot}${webroot}/service/postdownloadscript.php"
