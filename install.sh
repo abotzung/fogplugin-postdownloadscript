@@ -33,7 +33,7 @@ if [[ "$question" == "y" || "$question" == "Y" ]]; then
 	mkdir "${docroot}${webroot}/lib/plugins/postdownloadscript"
 	mkdir "/images/postdownloadscripts"
 	
-	cp -a "${basedir}/*" "${docroot}${webroot}/lib/plugins/postdownloadscript"
+	cp -a "${basedir}/." "${docroot}${webroot}/lib/plugins/postdownloadscript"
 	chown -R fogproject:www-data "${docroot}${webroot}/lib/plugins/postdownloadscript"
 	cp "/images/postdownloadscripts/fog.postdownload" "/images/postdownloadscripts/fog.postdownload_bak"
 	cp "${basedir}/src/fog.postdownload.example.txt" "/images/postdownloadscripts/fog.postdownload"
