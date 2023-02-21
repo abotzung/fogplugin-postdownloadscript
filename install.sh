@@ -27,7 +27,13 @@ echo ''
 echo "Welcome to the installer ! (FOG path : ${docroot}${webroot})"
 echo 'This patch comes with ABSOLUTELY NO WARRANTY'
 echo ''
-read -n1 -p "Do you wish to install this patch (y/N) ? :" question
+if [[ "$1" == "--unattended-yes" ]]; then
+	question='y'
+	echo ' --> UNATTENDED INSTALL., STARTING IN 5 Sec. <--'
+	sleep 5
+else
+	read -n1 -p "Do you wish to install this addon (y/N) ? :" question
+fi
 echo ''
 if [[ "$question" == "y" || "$question" == "Y" ]]; then
 	mkdir "${docroot}${webroot}/lib/plugins/postdownloadscript"
