@@ -5,7 +5,17 @@ A plugin for managing post-download scripts on a FOG Server
 
 Based on WOL plugin, this plugin lets you manage post-downloads scripts in a orderly fashion with the FOG webpage.
 
-## How to install : 
+## How to install :
+Easy way : 
+
+ - cd ~
+ - git clone https://github.com/abotzung/fogplugin-postdownloadscript.git
+ - cd fogplugin-postdownloadscript
+ - .\install.sh
+ 
+ 
+ Manual way :
+
 - cd (**Where you FOG Server is installed**)/lib/plugins (eg: /var/www/fog/lib/plugins)
 - git clone https://github.com/abotzung/fogplugin-postdownloadscript.git
 - mv fogplugin-postdownloadscript postdownloadscript
