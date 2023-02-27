@@ -5,7 +5,7 @@
 #
 # Auteur       : Alexandre BOTZUNG [alexandre.botzung@grandest.fr]
 # Entreprise   : Région Grand-Est - Maison de région de Saverne-Haguenau
-# Version      : 20230221q
+# Version      : 20230221
 #============================================================================ 
 # install.sh
 #   Ce script déploie l'addon fogplugin-postdownloadscript
