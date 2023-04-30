@@ -32,7 +32,7 @@ class AddPDSMenuItem extends Hook
      *
      * @var string
      */
-    public $description = 'Add menu for PostDownloadScripts';
+    public $description = 'Add menu and report types for PostDownloadScripts';
     /**
      * The active flag.
      *
@@ -74,7 +74,15 @@ class AddPDSMenuItem extends Hook
                     $this,
                     'addPageWithObject'
                 )
+            )
+            ->register(
+                'REPORT_TYPES',
+                array(
+                    $this,
+                    'reportTypes'
+                )
             );
+
     }
     /**
      * The menu data to change.
