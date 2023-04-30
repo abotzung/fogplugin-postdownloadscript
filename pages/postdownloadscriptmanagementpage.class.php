@@ -43,8 +43,8 @@ class PostdownloadscriptManagementPage extends FOGPage
         $this->menu = array(
             'list' => '🧾 ' . _('List all scripts'),
             'add' => '🔆 ' . _('Add a script'),
-			'export' => '↪️ ' . _('Export list'),
-			'import' => '↩️ ' . _('Import list'),
+            'export' => '↪️ ' . _('Export list'),
+            'import' => '↩️ ' . _('Import list'),
         );
         global $id;
         if ($id) { //Si on est dans le menu "général"
@@ -53,7 +53,7 @@ class PostdownloadscriptManagementPage extends FOGPage
                 $this->delformat => self::$foglang['Delete'],
             );
             $this->notes = array( /* La popup note dans la page "général" du script */
-                _('') => $this->obj->get('name'),
+                _('Script') => $this->obj->get('name'),
                 _('Description') => $this->obj->get('description'),
             );
         }
