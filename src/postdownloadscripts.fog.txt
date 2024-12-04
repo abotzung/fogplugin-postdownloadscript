@@ -1,8 +1,8 @@
-#!/bin/sh
+#!/bin/bash
 #
 #  PostDownloadScript FOG Stub client
 # 
-#  PHP version 5
+#  Bash
 # 
 #  @category PostDownloadScript
 #  @package  FOGProject
@@ -17,11 +17,14 @@
 
 # Charge les informations depuis le serveur FOG. 
 # Si le serveur a une tâche pour le client, la variable "$type" est peuplée
+# Alex 20241204 : Ajout du support "token"
 rm /tmp/hinfo.txt >/dev/null 2>&1
 sysuuid=$(dmidecode -s system-uuid)
 sysuuid=${sysuuid,,}
 mac=$(getMACAddresses)
-curl -Lks -o /tmp/hinfo.txt --data "sysuuid=${sysuuid}&mac=$mac" "${web}service/hostinfo.php" -A ''
+base64mac=$(echo $mac | base64)
+token=$(curl -Lks --data "mac=$base64mac" "${web}status/hostgetkey.php")
+curl -Lks -o /tmp/hinfo.txt --data "sysuuid=${sysuuid}&mac=$mac&hosttoken=${token}" "${web}service/hostinfo.php" -A ''
 
 imgid="" # Vide la variable imgid (la seule utile dans notre cas)
 [[ -f /tmp/hinfo.txt ]] && . /tmp/hinfo.txt >/dev/null 2>&1
@@ -39,6 +42,7 @@ if [[ ! $imgid -eq 0 ]]; then
 	### Une erreur est survenue
 	if [[ "$DoCurl" ==  *"!noscr"* ]]; then
 			echo "Une erreur est survenue ; pas de script disponible pour cette image (imgid=${imgid} )"
+			sleep 5
 			debugPause
 			return 0
 	fi
@@ -53,6 +57,7 @@ if [[ ! $imgid -eq 0 ]]; then
 			done
 	else
 			echo "Une erreur est survenue ; impossible de determiner le nombre de scripts"
+			sleep 5
 			echo $DoCurl
 			debugPause
 			return 0
@@ -84,5 +89,6 @@ else
 	# NOK
 	# La variable = 0? Si oui, on a peut être un problème...
 	echo "Une erreur est survenue ; Impossible d'avoir des infos concernant les variables systemes"
+	sleep 5
 	debugPause
 fi

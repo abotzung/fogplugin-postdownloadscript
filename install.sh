@@ -5,7 +5,7 @@
 #
 # Auteur       : Alexandre BOTZUNG [alexandre.botzung@grandest.fr]
 # Entreprise   : Région Grand-Est - Maison de région de Saverne-Haguenau
-# Version      : 20230221
+# Version      : 20240412
 #============================================================================ 
 # install.sh
 #   Ce script déploie l'addon fogplugin-postdownloadscript
@@ -51,6 +51,7 @@ if [[ "$question" == "y" || "$question" == "Y" ]]; then
 	cp "${basedir}/src/postdownloadscript.php.txt" "${docroot}${webroot}/service/postdownloadscript.php"
 	chmod +rx "${docroot}${webroot}/service/postdownloadscript.php"
 	
+	# BUG (FIXME!) : Cette méthode d'activation ne fonctionne PAS dans FOG 1.6+
 	# Active les plugins dans le système
 	mysql --execute="UPDATE globalSettings SET settingValue = '1' WHERE settingKey = 'FOG_PLUGINSYS_ENABLED';" fog
 
